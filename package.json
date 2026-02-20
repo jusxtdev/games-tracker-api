@@ -5,9 +5,8 @@
   "main": "index.js",
   "scripts": {
     "swagger": "node swagger.generate.js",
-    "dev": "npm run swagger && nodemon src/index.js",
-    "start": "node src/index.js",
-    "build": "npm run swagger && npx drizzle-kit push"
+    "dev": "npm run swagger && node src/index.js",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
