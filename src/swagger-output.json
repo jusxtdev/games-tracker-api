@@ -1,0 +1,709 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Games Tracker API",
+    "description": "Clean auto-generated API documentation",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Service health and root endpoints"
+    },
+    {
+      "name": "Authentication",
+      "description": "User authentication routes"
+    },
+    {
+      "name": "Games",
+      "description": "Game library routes"
+    },
+    {
+      "name": "Reviews",
+      "description": "Game review routes"
+    },
+    {
+      "name": "Stats",
+      "description": "User dashboard/analytics routes"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": "Use: Bearer <JWT_TOKEN>"
+    }
+  },
+  "paths": {
+    "/api/": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "description": "Basic API health/info endpoint",
+        "responses": {
+          "200": {
+            "description": "API is reachable",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string",
+                  "example": "Game Tracker API"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Register a new user account",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "john_doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "secret123"
+                }
+              },
+              "required": [
+                "username",
+                "email",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created"
+          },
+          "409": {
+            "description": "Username already exists"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Login and receive a JWT",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "john_doe"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "secret123"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged in successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "msg": {
+                  "type": "string",
+                  "example": "Logged in Successfully"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "jwt-token"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Incorrect password"
+          },
+          "404": {
+            "description": "Username not found"
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Refresh JWT token",
+        "responses": {
+          "200": {
+            "description": "New token generated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "msg": {
+                  "type": "string",
+                  "example": "New token generated Successfully"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "jwt-token"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Missing/invalid token"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/games": {
+      "post": {
+        "tags": [
+          "Games"
+        ],
+        "description": "Add a game to the authenticated user library",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Witcher 3"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "RPG"
+                },
+                "platform": {
+                  "type": "string",
+                  "example": "PC"
+                },
+                "releaseYear": {
+                  "type": "number",
+                  "example": 2015
+                },
+                "coverURL": {
+                  "type": "string",
+                  "example": "https://example.com/cover.jpg"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "PLAYING"
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Game created"
+          },
+          "409": {
+            "description": "Game title already exists"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Games"
+        ],
+        "description": "List all games for authenticated user",
+        "parameters": [
+          {
+            "name": "genre",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Filter by genre"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "PLAYING",
+              "COMPLETED",
+              "DROPPED",
+              "WANT",
+              "ONHOLD"
+            ]
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Filter by platform"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "description": "Sort field"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "type": "string",
+            "required": false,
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Games fetched successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/games/{id}": {
+      "get": {
+        "tags": [
+          "Games"
+        ],
+        "description": "Get one game by ID for authenticated user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Game ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game fetched successfully"
+          },
+          "404": {
+            "description": "Game not found"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Games"
+        ],
+        "description": "Update one game by ID for authenticated user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Game ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Witcher 3"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "RPG"
+                },
+                "platform": {
+                  "type": "string",
+                  "example": "PC"
+                },
+                "releaseYear": {
+                  "type": "number",
+                  "example": 2015
+                },
+                "coverURL": {
+                  "type": "string",
+                  "example": "https://example.com/cover.jpg"
+                },
+                "status": {
+                  "type": "string",
+                  "example": "COMPLETED"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game updated successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Games"
+        ],
+        "description": "Delete one game by ID for authenticated user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Game ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game deleted successfully"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/games/{id}/reviews": {
+      "post": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Add a review for a completed game",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Game ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rating": {
+                  "type": "number",
+                  "example": 9
+                },
+                "review_text": {
+                  "type": "string",
+                  "example": "Amazing world building and quests."
+                }
+              },
+              "required": [
+                "rating",
+                "review_text"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Review added successfully"
+          },
+          "403": {
+            "description": "Only completed games can be reviewed"
+          },
+          "404": {
+            "description": "Game not found"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Update review for a game",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Game ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rating": {
+                  "type": "number",
+                  "example": 10
+                },
+                "review_text": {
+                  "type": "string",
+                  "example": "Updated review text"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review updated successfully"
+          },
+          "404": {
+            "description": "Review not found for this game/user"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Delete review for a game",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Game ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review deleted successfully"
+          },
+          "404": {
+            "description": "Review not found for this game/user"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "tags": [
+          "Stats"
+        ],
+        "description": "Get aggregated dashboard stats for the authenticated user",
+        "responses": {
+          "200": {
+            "description": "Stats fetched successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "msg": {
+                  "type": "string",
+                  "example": "Game Overview"
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "overview": {
+                      "type": "object",
+                      "properties": {
+                        "total_games": {
+                          "type": "number",
+                          "example": 24
+                        },
+                        "PLAYING": {
+                          "type": "number",
+                          "example": 5
+                        },
+                        "COMPLETED": {
+                          "type": "number",
+                          "example": 10
+                        },
+                        "DROPPED": {
+                          "type": "number",
+                          "example": 2
+                        },
+                        "WANT": {
+                          "type": "number",
+                          "example": 6
+                        },
+                        "ONHOLD": {
+                          "type": "number",
+                          "example": 1
+                        }
+                      }
+                    },
+                    "reviewStats": {
+                      "type": "object",
+                      "properties": {
+                        "total_reviews": {
+                          "type": "number",
+                          "example": 14
+                        },
+                        "average_rating": {
+                          "type": "string",
+                          "example": "8.36"
+                        }
+                      }
+                    },
+                    "thisYear": {
+                      "type": "object",
+                      "properties": {
+                        "gamesAdded": {
+                          "type": "number",
+                          "example": 7
+                        },
+                        "games_completed": {
+                          "type": "number",
+                          "example": 3
+                        }
+                      }
+                    },
+                    "topGames": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "uuid"
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "The Witcher 3"
+                          },
+                          "rating": {
+                            "type": "number",
+                            "example": 10
+                          },
+                          "genre": {
+                            "type": "string",
+                            "example": "RPG"
+                          },
+                          "addedAt": {
+                            "type": "string",
+                            "example": "2026-02-20"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Missing/invalid token"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  }
+}
