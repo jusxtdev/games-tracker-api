@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: game-tracker-api
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: game-tracker-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+
+databases:
+  - name: game-tracker-db
+    databaseName: game_tracker
+    user: game_tracker_user
